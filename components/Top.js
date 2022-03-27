@@ -9,7 +9,7 @@ import WriteEssential from './WriteEssential'
 import { useRecoilState } from 'recoil'
 import { LoginState } from '../store'
 import TopNav from './TopNav'
-// import WriteSentence from './WriteSentence'
+import WriteSentence from './WriteSentence'
 
 export default function Top() {
   const { theme, setTheme } = useTheme()
@@ -39,21 +39,21 @@ export default function Top() {
   }
 
   return (
-    <div className="flex items-center justify-between py-4">
+    <div className="flex items-center py-6">
       <TopNav />
-
       <Link href="/" passHref>
-        <div className="flex items-center gap-1 cursor-pointer">
-          <span className="text-2xl font-bold text-blue-500">Korean</span>
+        <div className="flex items-center gap-1 cursor-pointer ml-2">
+          <p className="text-xs">learning</p>
+          <h1 className="text-2xl font-bold">Korean</h1>
         </div>
       </Link>
 
-      <div className="flex items-center">
+      <div className="flex items-center ml-auto">
         {uid === process.env.NEXT_PUBLIC_UID && (
           <div className="flex gap-2 mr-2">
             <WritePhoto />
             <WriteEssential />
-            {/* <WriteSentence /> */}
+            <WriteSentence />
             <UserRemoveIcon
               className="w-6 h-6 text-red-500 cursor-pointer"
               onClick={handleLogout}
@@ -61,7 +61,7 @@ export default function Top() {
           </div>
         )}
 
-        <span onClick={toggleTheme} className="mr-2">
+        <span onClick={toggleTheme}>
           {theme === 'dark' ? (
             <SunIcon className="w-6 h-6" />
           ) : (

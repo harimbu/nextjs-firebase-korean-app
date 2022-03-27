@@ -6,6 +6,7 @@ import { doc, deleteDoc } from 'firebase/firestore'
 import { ref, deleteObject } from 'firebase/storage'
 import { useRecoilValue } from 'recoil'
 import { LoginState } from '../store'
+import Image from 'next/image'
 
 export default function PhotoItem({ id, kor, eng, url, image }) {
   const uid = useRecoilValue(LoginState)
@@ -17,16 +18,22 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
   }
 
   return (
-    <div className="flex items-center max-w-xl bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden">
-      <div className="w-24">
-        <img src={url} alt="" className="aspect-square object-cover" />
+    <div className="flex items-center max-w-xl bg-white dark:bg-gray-800 rounded-md overflow-hidden">
+      <div className="w-24 relative aspect-square">
+        <Image
+          src={url}
+          alt=""
+          layout="fill"
+          className="object-cover"
+          priority
+        />
       </div>
       <div className="flex items-center w-full px-3">
         <div>
           <div className="flex items-center gap-2">
-            <VolumeUpIcon className="w-5 h-5 text-green-500" />
+            <VolumeUpIcon className="w-5 h-5" />
             <SayButton rate={0.7} text={kor}>
-              <span className="text-green-500 text-1xl font-bold ">{kor}</span>
+              <span className="text-1xl font-bold ">{kor}</span>
             </SayButton>
           </div>
           <p className="text-gray-400 text-sm">{eng}</p>

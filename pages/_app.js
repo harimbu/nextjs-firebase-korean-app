@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <RecoilRoot>
       <ThemeProvider attribute="class" defaultTheme="dark">
-        <div className="px-4">
+        <div className="px-6">
           <Top />
           <Component {...pageProps} />
         </div>

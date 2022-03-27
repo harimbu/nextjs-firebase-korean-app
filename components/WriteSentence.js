@@ -4,10 +4,13 @@ import { db, storage } from '../firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { AnnotationIcon } from '@heroicons/react/solid'
+import Router, { useRouter } from 'next/router'
 
-export default function WriteSentence() {
-  const [photo, setPhoto] = useState({ kor: '', eng: '' })
+export default function WriteEssential() {
+  const [word, setWord] = useState({ kor: '', eng: '' })
   const [isOpen, setIsOpen] = useState(false)
+
+  const router = useRouter()
 
   function closeModal() {
     setIsOpen(false)
@@ -19,19 +22,27 @@ export default function WriteSentence() {
 
   const handleSubmit = e => {
     e.preventDefault()
+    addText()
+  }
+
+  const addText = async () => {
     const data = {
-      kor: photo.kor,
-      eng: photo.eng,
+      kor: word.kor,
+      eng: word.eng,
       timestamp: serverTimestamp()
     }
-    await addDoc(collection(db, 'sentences'), data)
-    setPhoto({ kor: '', eng: '' })
+    await addDoc(collection(db, 'sentence'), data)
+    setWord({ kor: '', eng: '' })
     setIsOpen(false)
+    router.push('/sentence')
   }
 
   return (
     <div>
-      <AnnotationIcon className="w-6 h-6 text-blue-500 m-auto cursor-pointer" onClick={openModal} />
+      <AnnotationIcon
+        className="w-6 h-6 text-blue-500 m-auto cursor-pointer"
+        onClick={openModal}
+      />
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -53,7 +64,10 @@ export default function WriteSentence() {
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
-            <span className="inline-block h-screen align-middle" aria-hidden="true">
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
               &#8203;
             </span>
             <Transition.Child
@@ -66,23 +80,29 @@ export default function WriteSentence() {
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Dialog.Title as="h3" className="text-lg font-bold mb-3 text-black">
-                  Sentences
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-bold mb-3 text-black"
+                >
+                  200 essential words
                 </Dialog.Title>
-                <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
+                <form
+                  className="flex flex-col space-y-3 text-black"
+                  onSubmit={handleSubmit}
+                >
                   <input
                     type="text"
                     placeholder="korean"
                     className="p-3 border rounded-md bg-white"
-                    value={photo.kor}
-                    onChange={e => setPhoto({ ...photo, kor: e.target.value })}
+                    value={word.kor}
+                    onChange={e => setWord({ ...word, kor: e.target.value })}
                   />
                   <input
                     type="text"
                     placeholder="english"
                     className="p-3 border rounded-md bg-white"
-                    value={photo.eng}
-                    onChange={e => setPhoto({ ...photo, eng: e.target.value })}
+                    value={word.eng}
+                    onChange={e => setWord({ ...word, eng: e.target.value })}
                   />
 
                   <div className="mt-4">
