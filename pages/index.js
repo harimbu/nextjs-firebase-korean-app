@@ -1,10 +1,10 @@
 import React from 'react'
-import Photo from './photo'
+import Sentence from './sentence'
 
 export default function Home() {
   return (
     <div>
-      <Photo />
+      <Sentence />
     </div>
   )
 }

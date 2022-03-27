@@ -1,6 +1,11 @@
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import { SunIcon, MoonIcon, UserRemoveIcon } from '@heroicons/react/solid'
+import {
+  SunIcon,
+  MoonIcon,
+  UserRemoveIcon,
+  VolumeUpIcon
+} from '@heroicons/react/solid'
 import { useEffect, useState } from 'react'
 import { auth } from '../firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
@@ -40,10 +45,9 @@ export default function Top() {
 
   return (
     <div className="flex items-center py-6">
-      <TopNav />
       <Link href="/" passHref>
         <div className="flex items-center gap-1 cursor-pointer ml-2">
-          <p className="text-xs">learning</p>
+          {/* <p className="text-xs">learning</p> */}
           <h1 className="text-2xl font-bold">Korean</h1>
         </div>
       </Link>
@@ -63,9 +67,9 @@ export default function Top() {
 
         <span onClick={toggleTheme}>
           {theme === 'dark' ? (
-            <SunIcon className="w-6 h-6" />
+            <SunIcon className="w-5 h-5" />
           ) : (
-            <MoonIcon className="w-6 h-6" />
+            <MoonIcon className="w-5 h-5" />
           )}
         </span>
       </div>

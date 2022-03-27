@@ -8,7 +8,6 @@ import { ref, deleteObject } from 'firebase/storage'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useRecoilValue } from 'recoil'
 import { LoginState } from '../store'
-import Image from 'next/image'
 
 export default function PhotoItem({ id, kor, eng, url, image }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,12 +35,11 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
 
   return (
     <div>
-      <div onClick={openModal} className="relative aspect-square">
-        <Image
+      <div onClick={openModal}>
+        <img
           src={url}
           alt={image}
-          layout="fill"
-          className="rounded-2xl object-cover"
+          className="aspect-square rounded-2xl object-cover"
         />
       </div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -83,13 +81,11 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
                 className="inline-block w-full max-w-xs overflow-hidden text-left align-middle
               transition-all transform shadow-xl rounded-3xl bg-white dark:bg-slate-700"
               >
-                <div className="relative aspect-square">
-                  <Image
+                <div>
+                  <img
                     src={url}
                     alt={image}
-                    layout="fill"
-                    className=" object-cover"
-                    priority
+                    className="aspect-square object-cover"
                   />
                 </div>
                 <div className="px-6 py-4 flex items-center justify-between">
