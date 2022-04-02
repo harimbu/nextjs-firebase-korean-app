@@ -1,31 +1,27 @@
+import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import {
-  SunIcon,
-  MoonIcon,
-  UserRemoveIcon,
-  VolumeUpIcon
-} from '@heroicons/react/solid'
-import { useEffect, useState } from 'react'
-import { auth } from '../firebase'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import WritePhoto from './WrtiePhoto'
-import WriteEssential from './WriteEssential'
+import { SunIcon, MoonIcon } from '@heroicons/react/solid'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import TopNav from './TopNav'
 import { useRecoilState } from 'recoil'
 import { LoginState } from '../store'
-import TopNav from './TopNav'
-import WriteSentence from './WriteSentence'
+import { app } from '../firebase'
+import SentenceWrite from './SentenceWrite'
+import EssentialWrite from './EssentialWrite'
+import PhotoWrite from './PhotoWrite'
 
 export default function Top() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [uid, setUid] = useRecoilState(LoginState)
+  const [isLogin, setIsLogin] = useRecoilState(LoginState)
 
+  const auth = getAuth(app)
   onAuthStateChanged(auth, user => {
     if (user) {
-      setUid(user.uid)
+      setIsLogin(true)
     } else {
-      setUid(null)
+      setIsLogin(false)
     }
   })
 
@@ -45,23 +41,23 @@ export default function Top() {
 
   return (
     <div className="flex items-center py-6">
+      <TopNav />
       <Link href="/" passHref>
-        <div className="flex items-center gap-1 cursor-pointer ml-2">
-          {/* <p className="text-xs">learning</p> */}
-          <h1 className="text-2xl font-bold">Korean</h1>
+        <div className="cursor-pointer flex items-center">
+          <span className="text-xs mr-1">learning</span>
+          <h1 className="text-lg font-bold">Korean</h1>
         </div>
       </Link>
 
       <div className="flex items-center ml-auto">
-        {uid === process.env.NEXT_PUBLIC_UID && (
-          <div className="flex gap-2 mr-2">
-            <WritePhoto />
-            <WriteEssential />
-            <WriteSentence />
-            <UserRemoveIcon
-              className="w-6 h-6 text-red-500 cursor-pointer"
-              onClick={handleLogout}
-            />
+        {isLogin && (
+          <div className="flex gap-4 mr-6">
+            <SentenceWrite />
+            <EssentialWrite />
+            <PhotoWrite />
+            <button className="px-3 py-1" onClick={handleLogout}>
+              logout
+            </button>
           </div>
         )}
 

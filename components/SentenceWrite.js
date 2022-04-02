@@ -1,13 +1,27 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
-import { db, storage } from '../firebase'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { CameraIcon } from '@heroicons/react/solid'
+import { Fragment, useState, useEffect } from 'react'
+import { db } from '../firebase'
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  doc
+} from 'firebase/firestore'
+import { useRouter } from 'next/router'
 
-export default function WritePhoto() {
-  const [word, setWord] = useState({ kor: '', eng: '' })
+export default function SentenceWrite() {
+  const [word, setWord] = useState({ kor: '', eng: '', category: '' })
   const [isOpen, setIsOpen] = useState(false)
+  const [categories, setCategories] = useState([])
+
+  const router = useRouter()
+
+  useEffect(() => {
+    onSnapshot(doc(db, 'categories', 'categoryID'), doc => {
+      setCategories(doc.data().category)
+    })
+  }, [])
 
   function closeModal() {
     setIsOpen(false)
@@ -19,33 +33,32 @@ export default function WritePhoto() {
 
   const handleSubmit = e => {
     e.preventDefault()
-    const file = e.target.file.files[0]
-    uploadImg(file)
+    addText()
   }
 
-  const uploadImg = async file => {
-    const imgRef = ref(storage, `/photo/${file.name}`)
-    const snapshot = await uploadBytes(imgRef, file)
-    const url = await getDownloadURL(snapshot.ref)
-    addText(file, url)
-  }
-
-  const addText = async (file, url) => {
+  const addText = async () => {
     const data = {
       kor: word.kor,
       eng: word.eng,
-      image: file.name,
-      url: url,
+      category: word.category,
       timestamp: serverTimestamp()
     }
-    await addDoc(collection(db, 'photo'), data)
-    setWord({ kor: '', eng: '' })
+    await addDoc(collection(db, 'sentence'), data)
+    setWord({ kor: '', eng: '', category: '' })
     setIsOpen(false)
+    router.push('/sentence')
   }
+
+  console.log(word)
 
   return (
     <div>
-      <CameraIcon className="w-6 h-6 text-blue-500 m-auto cursor-pointer" onClick={openModal} />
+      <button
+        className="bg-indigo-500 text-white hover:bg-indigo-600 px-3 py-1 rounded-full"
+        onClick={openModal}
+      >
+        문장 추가
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -67,7 +80,10 @@ export default function WritePhoto() {
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
-            <span className="inline-block h-screen align-middle" aria-hidden="true">
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
               &#8203;
             </span>
             <Transition.Child
@@ -80,10 +96,28 @@ export default function WritePhoto() {
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Dialog.Title as="h3" className="text-lg font-bold mb-3 text-black">
-                  Photo Words
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-bold mb-3 text-black"
+                >
+                  문장 추가
                 </Dialog.Title>
-                <form className="flex flex-col space-y-3 text-black" onSubmit={handleSubmit}>
+                <form
+                  className="flex flex-col space-y-3 text-black"
+                  onSubmit={handleSubmit}
+                >
+                  <select
+                    className="block w-full bg-gray-100 border border-gray-400 hover:border-gray-500 px-3 py-2 rounded-md"
+                    onChange={e =>
+                      setWord({ ...word, category: e.target.value })
+                    }
+                  >
+                    {categories.map(item => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="text"
                     placeholder="korean"
@@ -98,23 +132,13 @@ export default function WritePhoto() {
                     value={word.eng}
                     onChange={e => setWord({ ...word, eng: e.target.value })}
                   />
-                  <input
-                    type="file"
-                    id="file"
-                    className="block w-full text-sm text-gray-500
-                              file:mr-4 file:py-2 file:px-4
-                              file:rounded-full file:border-0
-                              file:text-sm file:font-semibold
-                              file:bg-violet-50 file:text-violet-700
-                              hover:file:bg-violet-100"
-                  />
 
                   <div className="mt-4">
                     <button
                       type="submit"
                       className="inline-flex justify-center px-4 py-2 text-sm font-bold text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                     >
-                      Got it, thanks!
+                      추가하기
                     </button>
                   </div>
                 </form>

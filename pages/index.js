@@ -1,4 +1,3 @@
-import React from 'react'
 import Sentence from './sentence'
 
 export default function Home() {

@@ -1,26 +1,48 @@
-import { auth } from '../firebase'
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
+import { useState } from 'react'
+// import { app } from '../firebase'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'next/router'
+import { useRecoilValue } from 'recoil'
+import { LoginState } from '../store'
 
 export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const isLogin = useRecoilValue(LoginState)
+
   const router = useRouter()
+  const auth = getAuth()
 
-  const provider = new GoogleAuthProvider()
+  if (isLogin) {
+    router.push('/')
+  }
 
-  const handleLogin = () => {
-    signInWithPopup(auth, provider).then(() => {
+  const handleSubmit = e => {
+    e.preventDefault()
+    signInWithEmailAndPassword(auth, email, password).then(() => {
       router.push('/')
     })
   }
 
   return (
-    <div className="pt-10 flex flex-col items-center gap-3">
-      <button
-        onClick={handleLogin}
-        className="px-6 py-3 bg-blue-500 text-white text-sm rounded-lg"
-      >
-        signin with Google
-      </button>
+    <div className="pt-10 flex flex-col items-center gap-3 max-w-xs m-auto">
+      <form className="flex flex-col gap-3 w-full" onSubmit={handleSubmit}>
+        <input
+          className="p-3"
+          type="email"
+          placeholder="이메일"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <input
+          className="p-3"
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <button type="submit">로그인</button>
+      </form>
     </div>
   )
 }

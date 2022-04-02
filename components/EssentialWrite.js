@@ -1,16 +1,21 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
-import { db, storage } from '../firebase'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { DocumentTextIcon } from '@heroicons/react/solid'
-import Router, { useRouter } from 'next/router'
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  getFirestore
+} from 'firebase/firestore'
+import { useRouter } from 'next/router'
 
-export default function WriteEssential() {
+export default function EssentialWrite() {
   const [word, setWord] = useState({ kor: '', eng: '' })
   const [isOpen, setIsOpen] = useState(false)
 
   const router = useRouter()
+  const db = getFirestore()
+  const storage = getStorage()
 
   function closeModal() {
     setIsOpen(false)
@@ -49,7 +54,12 @@ export default function WriteEssential() {
 
   return (
     <div>
-      <DocumentTextIcon className="w-6 h-6 text-blue-500 m-auto cursor-pointer" onClick={openModal} />
+      <button
+        className="bg-violet-500 text-white hover:bg-violet-600 px-3 py-1 rounded-full"
+        onClick={openModal}
+      >
+        200 필수 단어 추가
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -71,7 +81,10 @@ export default function WriteEssential() {
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
-            <span className="inline-block h-screen align-middle" aria-hidden="true">
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
               &#8203;
             </span>
             <Transition.Child
@@ -84,10 +97,16 @@ export default function WriteEssential() {
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Dialog.Title as="h3" className="text-lg font-bold mb-3 text-black">
-                  200 essential words
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-bold mb-3 text-black"
+                >
+                  200 필수 단어 추가
                 </Dialog.Title>
-                <form className="flex flex-col space-y-3 text-black" onSubmit={handleSubmit}>
+                <form
+                  className="flex flex-col space-y-3 text-black"
+                  onSubmit={handleSubmit}
+                >
                   <input
                     type="text"
                     placeholder="korean"
@@ -118,7 +137,7 @@ export default function WriteEssential() {
                       type="submit"
                       className="inline-flex justify-center px-4 py-2 text-sm font-bold text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                     >
-                      Got it, thanks!
+                      추가하기
                     </button>
                   </div>
                 </form>

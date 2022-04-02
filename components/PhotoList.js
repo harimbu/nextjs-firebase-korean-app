@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react'
-import { db } from '../firebase'
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
+import {
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+  getFirestore
+} from 'firebase/firestore'
 import PhotoItem from './PhotoItem'
 
 export default function PhotoList() {
   const [words, setWords] = useState([])
 
   useEffect(() => {
+    const db = getFirestore()
     const q = query(collection(db, 'photo'), orderBy('timestamp', 'desc'))
     onSnapshot(q, snapshot => {
       setWords(
