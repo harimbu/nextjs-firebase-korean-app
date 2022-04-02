@@ -45,7 +45,7 @@ export default function Top() {
       <Link href="/" passHref>
         <div className="cursor-pointer flex items-center">
           <span className="text-xs mr-1">learning</span>
-          <h1 className="text-lg font-bold">Korean</h1>
+          <h1 className="text-lg font-bold">KOREAN</h1>
         </div>
       </Link>
 

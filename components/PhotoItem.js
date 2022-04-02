@@ -48,7 +48,7 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
           className="fixed inset-0 z-10 overflow-y-auto backdrop-blur-sm"
           onClose={closeModal}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div className="min-h-screen px-16 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -88,11 +88,11 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
                     className="aspect-square object-cover"
                   />
                 </div>
-                <div className="px-6 py-4 flex items-center justify-between">
+                <div className="px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <VolumeUpIcon className="w-6 h-6" />
+                    <VolumeUpIcon className="w-5 h-5" />
                     <SayButton rate={0.5} text={kor}>
-                      <span className="text-2xl font-bold ">{kor}</span>
+                      <span className="text-sm font-bold">{kor}</span>
                     </SayButton>
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-3">
