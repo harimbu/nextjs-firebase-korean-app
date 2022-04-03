@@ -1,17 +1,17 @@
 import { VolumeUpIcon, TrashIcon } from '@heroicons/react/solid'
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState } from 'react'
 import { SayButton } from 'react-say'
-import { db, storage, auth } from '../firebase'
+import { db, storage } from '../firebase'
 import { doc, deleteDoc } from 'firebase/firestore'
 import { ref, deleteObject } from 'firebase/storage'
-import { onAuthStateChanged } from 'firebase/auth'
 import { useRecoilValue } from 'recoil'
 import { LoginState } from '../store'
+import PhotoEdit from './PhotoEdit'
 
 export default function PhotoItem({ id, kor, eng, url, image }) {
   const [isOpen, setIsOpen] = useState(false)
-  const uid = useRecoilValue(LoginState)
+  const isLogin = useRecoilValue(LoginState)
 
   function closeModal() {
     setIsOpen(false)
@@ -23,14 +23,10 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
 
   const handleDelete = async id => {
     const imageRef = ref(storage, `photo/${image}`)
-    deleteObject(imageRef)
-      .then(() => {
-        deleteDoc(doc(db, 'photo', id))
-        setIsOpen(false)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    deleteObject(imageRef).then(() => {
+      deleteDoc(doc(db, 'photo', id))
+      setIsOpen(false)
+    })
   }
 
   return (
@@ -97,11 +93,14 @@ export default function PhotoItem({ id, kor, eng, url, image }) {
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-3">
                     <span>{eng}</span>
-                    {uid === process.env.NEXT_PUBLIC_UID && (
-                      <TrashIcon
-                        className="w-6 h-6 text-red-500"
-                        onClick={() => handleDelete(id)}
-                      />
+                    {isLogin && (
+                      <div className="ml-auto flex gap-3">
+                        <PhotoEdit id={id} kor={kor} eng={eng} />
+                        <TrashIcon
+                          className="w-5 h-5 text-red-600 hover:text-red-700"
+                          onClick={() => handleDelete(id)}
+                        />
+                      </div>
                     )}
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { MenuAlt2Icon } from '@heroicons/react/solid'
+import { MenuIcon } from '@heroicons/react/solid'
 import { Popover, Transition } from '@headlessui/react'
 import Link from 'next/link'
 
@@ -6,7 +6,7 @@ export default function TopNav() {
   return (
     <Popover className="relative mr-2">
       <Popover.Button className="flex items-center">
-        <MenuAlt2Icon className="w-6 h-6" />
+        <MenuIcon className="w-6 h-6" />
       </Popover.Button>
       <Transition
         enter="transition duration-100 ease-out"

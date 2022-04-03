@@ -1,27 +1,12 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState } from 'react'
+import { AdjustmentsIcon } from '@heroicons/react/solid'
+import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  onSnapshot,
-  doc
-} from 'firebase/firestore'
-import { useRouter } from 'next/router'
 
-export default function SentenceWrite() {
-  const [word, setWord] = useState({ kor: '', eng: '', category: '' })
+export default function EssentialEdit({ id, kor, eng }) {
+  const [word, setWord] = useState({ kor: kor, eng: eng })
   const [isOpen, setIsOpen] = useState(false)
-  const [categories, setCategories] = useState([])
-
-  const router = useRouter()
-
-  useEffect(() => {
-    onSnapshot(doc(db, 'categories', 'categoryID'), doc => {
-      setCategories(doc.data().category)
-    })
-  }, [])
 
   function closeModal() {
     setIsOpen(false)
@@ -31,32 +16,28 @@ export default function SentenceWrite() {
     setIsOpen(true)
   }
 
-  const handleSubmit = e => {
+  const handleEdit = e => {
     e.preventDefault()
-    addText()
+    updateText()
   }
 
-  const addText = async () => {
+  const updateText = async () => {
+    const docRef = doc(db, 'essential', id)
     const data = {
       kor: word.kor,
-      eng: word.eng,
-      category: word.category,
-      timestamp: serverTimestamp()
+      eng: word.eng
     }
-    await addDoc(collection(db, 'sentence'), data)
-    setWord({ kor: '', eng: '', category: '' })
+
+    await updateDoc(docRef, data)
     setIsOpen(false)
-    router.push('/sentence')
   }
 
   return (
     <div>
-      <button
-        className="bg-indigo-500 text-white hover:bg-indigo-600 px-3 py-1 rounded-full"
+      <AdjustmentsIcon
+        className="w5 h-5 text-violet-500 hover:text-violet-600"
         onClick={openModal}
-      >
-        문장 추가
-      </button>
+      />
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -93,29 +74,14 @@ export default function SentenceWrite() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg font-bold mb-3 text-black"
-                >
-                  문장 추가
+              <div className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <Dialog.Title className="mb-3 font-bold text-black">
+                  200 필수단어 수정
                 </Dialog.Title>
                 <form
                   className="flex flex-col space-y-3 text-black"
-                  onSubmit={handleSubmit}
+                  onSubmit={handleEdit}
                 >
-                  <select
-                    className="block w-full bg-gray-100 border border-gray-400 hover:border-gray-500 px-3 py-2 rounded-md"
-                    onChange={e =>
-                      setWord({ ...word, category: e.target.value })
-                    }
-                  >
-                    {categories.map(item => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
                   <input
                     type="text"
                     placeholder="korean"
@@ -134,9 +100,9 @@ export default function SentenceWrite() {
                   <div className="mt-4">
                     <button
                       type="submit"
-                      className="inline-flex justify-center px-4 py-2 text-sm font-bold text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                      className="flex justify-center px-4 py-2 text-sm text-white bg-gray-700 hover:bg-black rounded-md"
                     >
-                      추가하기
+                      수정하기
                     </button>
                   </div>
                 </form>

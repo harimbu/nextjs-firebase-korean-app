@@ -60,8 +60,6 @@ export default function SentenceList() {
     })
   }
 
-  console.log(selected)
-
   return (
     <>
       <div className="max-w-sm sm:max-w-xs m-auto">

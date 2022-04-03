@@ -39,8 +39,6 @@ export default function SentenceEdit({ id, kor, eng, category }) {
     setIsOpen(false)
   }
 
-  console.log(word.category)
-
   return (
     <div>
       <AdjustmentsIcon
